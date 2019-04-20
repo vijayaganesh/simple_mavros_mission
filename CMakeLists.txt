@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(simple-mavros-mission)
+project(simple_mavros_mission)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
-    message_generation
     mavros_msgs
     rospy
     roscpp)
@@ -104,9 +103,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES simple-mavros-mission
-CATKIN_DEPENDS rospy mavros_msgs geometry_msgs
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS roscpp rospy mavros_msgs geometry_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -118,14 +117,18 @@ CATKIN_DEPENDS rospy mavros_msgs geometry_msgs
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
+message("--------------------------------------------------------------------------------------------------------------------------")
+
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/simple-mavros-mission.cpp
-# )
+# add_library(${PROJECT_NAME}_core
+#   src/drone.cpp
+#   src/mission_handler.cpp
+#   src/square_path_mission.cpp
+#   )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -135,7 +138,15 @@ ${catkin_INCLUDE_DIRS}
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/simple-mavros-mission_node.cpp)
+add_library(${PROJECT_NAME}_core
+  src/drone.cpp
+  src/mission_handler.cpp
+  src/square_path_mission.cpp)
+
+add_executable(
+  ${PROJECT_NAME}_node
+  src/${PROJECT_NAME}_node.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -145,12 +156,24 @@ ${catkin_INCLUDE_DIRS}
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}_core
+   ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}_node 
+  ${PROJECT_NAME}_core
+  ${catkin_EXPORTED_TARGETS})
+
+
+target_link_libraries(${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(${PROJECT_NAME}_node
+  ${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -167,18 +190,23 @@ ${catkin_INCLUDE_DIRS}
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS ${PROJECT_NAME}_node
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
+)
+
+install(DIRECTORY include/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
