@@ -7,8 +7,8 @@
  * Copyright 2019 VijayaGanesh Mohan
  */
 
-#ifndef SIMPLE_MAVROS_MISSION_MISSION_HPP
-#define SIMPLE_MAVROS_MISSION_MISSION_HPP
+#ifndef SIMPLE_MAVROS_MISSION_MISSION_HPP_
+#define SIMPLE_MAVROS_MISSION_MISSION_HPP_
 
 namespace simple_mission {
 /**
@@ -21,13 +21,13 @@ class Mission {
    * @brief Construct a new Mission object
    *
    */
-  Mission();
+  Mission() {}
 
   /**
    * @brief Destroy the Mission object
    *
    */
-  virtual ~Mission();
+  virtual ~Mission() {}
 
   /**
    * @brief The required pre processing to carryout a mission is done in this
@@ -36,7 +36,7 @@ class Mission {
    * @return true if the preparation is successful
    * @return false if the preparation failed
    */
-  virtual bool prepare_mission();
+  virtual bool prepare_mission() {}
 
   /**
    * @brief This function is called to run the mission
@@ -53,7 +53,7 @@ class Mission {
    * @return true if the post processing is successful.
    * @return false if the post processing failed.
    */
-  virtual bool end_mission();
+  virtual bool end_mission() {}
 
   /**
    * @brief This method starts the mission and runs the prepare, run and end
@@ -64,4 +64,4 @@ class Mission {
 };
 }  // namespace simple_mission
 
-#endif
+#endif  // SIMPLE_MAVROS_MISSION_MISSION_HPP_

@@ -33,7 +33,10 @@ Drone::Drone(const ros::NodeHandle& nh) : nh_(nh) {
       nh_.serviceClient<mavros_msgs::ParamPull>(PARAM_PULL_SERVICE);
 }
 
+Drone::~Drone() {}
+
 void Drone::update_current_state_(const mavros_msgs::State state) {
+  ROS_INFO("Current_state : %s", state.mode.c_str());
   current_state_ = state;
 }
 
