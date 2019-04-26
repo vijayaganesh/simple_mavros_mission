@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES ${PROJECT_NAME}
+    # LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS roscpp rospy mavros_msgs geometry_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -139,6 +139,10 @@ message("-----------------------------------------------------------------------
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_library(${PROJECT_NAME}_core
+  include/simple_mavros_mission/drone.hpp
+  include/simple_mavros_mission/mission.hpp
+  include/simple_mavros_mission/mission_handler.hpp
+  include/simple_mavros_mission/square_path_mission.hpp
   src/drone.cpp
   src/mission_handler.cpp
   src/square_path_mission.cpp)
